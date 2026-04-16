@@ -25,10 +25,13 @@ if (!fs.existsSync(uploadDir)) {
 
 app.use(cors());
 app.use(express.json());
+
 app.get("/", (req, res) => {
   res.redirect("/splash.html");
 });
+
 app.use(express.static(path.join(__dirname, "public"), { index: false }));
+
 if (fs.existsSync(reactDistDir)) {
   app.use("/app", express.static(reactDistDir));
 }
@@ -46,22 +49,22 @@ if (fs.existsSync(reactDistDir)) {
   });
 }
 
+// Connect to MongoDB
 mongoose
   .connect(MONGODB_URI)
   .then(async () => {
     console.log("MongoDB connected");
     await seedIfEmpty();
-    app.listen(PORT, () => {
-      console.log(`Server: http://localhost:${PORT}`);
-      console.log(`Home: http://localhost:${PORT}/`);
-      console.log(`Customer: http://localhost:${PORT}/splash.html`);
-      console.log(`Restaurant: http://localhost:${PORT}/restaurant/login.html`);
-      if (fs.existsSync(reactDistDir)) {
-        console.log(`React app: http://localhost:${PORT}/app`);
-      }
-    });
   })
   .catch((err) => {
     console.error("MongoDB connection failed:", err.message);
-    process.exit(1);
   });
+
+// Only listen if running directly (for local development)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
