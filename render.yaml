@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: clover-food-delivery
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: MONGODB_URI
+        sync: false
+        placeholder: "Get this from MongoDB Atlas"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: RAZORPAY_KEY_ID
+        sync: false
+        placeholder: "rzp_test_..."
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+        placeholder: "..."
