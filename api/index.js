@@ -28,14 +28,27 @@ app.use("/api/owner", ownerRoutes);
 
 // Connect to MongoDB
 let cachedDb = null;
+mongoose.set("bufferCommands", false); // Fail fast to see error
 
 async function connectToDatabase() {
   if (cachedDb) return cachedDb;
-  const db = await mongoose.connect(MONGODB_URI);
-  console.log("MongoDB connected");
-  await seedIfEmpty();
-  cachedDb = db;
-  return db;
+  console.log("Attempting to connect to MongoDB...");
+  try {
+    const db = await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000, // 5 seconds timeout
+    });
+    console.log("MongoDB connected successfully");
+    await seedIfEmpty();
+    cachedDb = db;
+    return db;
+  } catch (err) {
+    console.error("DEBUG: MongoDB Connection Error Details:", {
+      message: err.message,
+      code: err.code,
+      name: err.name
+    });
+    throw err;
+  }
 }
 
 // Middleware to ensure DB connection
