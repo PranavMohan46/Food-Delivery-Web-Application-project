@@ -8,7 +8,7 @@
     "dev": "node server.js",
     "client:dev": "vite --config client/vite.config.js",
     "client:build": "vite build --config client/vite.config.js",
-    "build": "npm run client:build",
+    "build": "npm run client:build && mkdir -p public/app && cp -r client/dist/* public/app/",
     "dev:full": "concurrently \"npm run dev\" \"npm run client:dev\""
   },
   "engines": {
